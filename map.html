@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>Inklings</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap">
 <style>
-:root{--bg:#110220;--panel:#210334;--ink:#f3eafb;--muted:#bfa4dc;--line:#431f6c;--accent:#10660d;--on-accent:#f4fff3;--accent-text:#74dc6f;--hi:#8dffb0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--sans:"Alegreya Sans","Segoe UI","Helvetica Neue",Arial,sans-serif;--serif:Alegreya,Georgia,"Times New Roman",serif;--bg:#110220;--panel:#210334;--ink:#f3eafb;--muted:#bfa4dc;--line:#431f6c;--accent:#10660d;--on-accent:#f4fff3;--accent-text:#74dc6f;--hi:#8dffb0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column}
+body{background:var(--bg);color:var(--ink);font:17px/1.5 var(--serif);display:flex;flex-direction:column}
 
 #map{flex:1;min-height:0;min-width:0;position:relative;overflow:hidden;touch-action:none;cursor:grab}
 #map.drag{cursor:grabbing}#map>svg{width:100%;height:100%;display:block;user-select:none}
 aside{background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;max-height:46vh;min-height:0}
 @media(min-width:780px){aside{width:min(360px,34vw);max-height:none;border-top:0;border-right:1px solid var(--line)}}
-h1{font:600 20px/1.2 "Iowan Old Style",Georgia,serif;margin:0}
-h2{font:600 19px/1.2 "Iowan Old Style",Georgia,serif;margin:0}
+h1{font:700 22px/1.2 var(--sans);margin:0}
+h2{font:700 21px/1.2 var(--sans);margin:0}
 section{padding:12px 0;border-top:1px solid var(--line)}section:first-of-type{border-top:0;padding-top:0}
 label{display:block;color:var(--muted);font-size:13px;margin:8px 0 3px}
 select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
@@ -27,11 +30,15 @@ select{width:100%}button{cursor:pointer}button:hover{border-color:var(--accent-t
 .head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);flex:none}
 .tabs{display:flex;gap:4px}.tabs button{border-radius:999px;padding:5px 14px;font-size:14px}.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
 .panel{flex:1 1 auto;min-height:0;overflow:auto;padding:12px 16px;overscroll-behavior:contain}.panel[hidden]{display:none}
-#slist{list-style:none;padding:0;max-height:220px;overflow:auto}#slist .cur button{font-weight:700;text-decoration:none}details{margin-top:12px}summary{cursor:pointer;color:var(--muted);font-size:13px}
+#slist{list-style:none;padding:0;margin:6px 0 0}#slist .cur button{font-weight:700;text-decoration:none}details{margin-top:12px}summary{cursor:pointer;color:var(--muted);font-size:13px}
 .strip{display:flex;gap:2px;margin-top:10px;height:30px}.strip button{flex:1 1 30px;min-width:30px;padding:0;border-radius:4px;font-size:11px;color:var(--muted);background:var(--bg)}.strip button.chip{flex:0 0 auto;padding:0 8px}.card{margin-top:0}
 .zi{cursor:zoom-in}
+button,select,summary,label,.tlnav,.zoom,.layers,.axis,.tabs{font-family:var(--sans)}
+.muted{font-size:14.5px}.cp{font-size:14.5px}
+#ports,#kings-road-towns{font-weight:500}
+#story text{font-family:var(--sans)}
 #npcTown{margin:4px 0 6px}
-.sh{margin:16px 0 4px;font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}#pChars .sh:first-child{margin-top:0}
+.sh{margin:16px 0 4px;font:700 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}#pChars .sh:first-child{margin-top:0}
 #kings-road path{stroke-width:2.5px;vector-effect:non-scaling-stroke}
 #sea-routes{stroke-width:1.8px;stroke-dasharray:6 5}#sea-routes path,.glow path{vector-effect:non-scaling-stroke}
 #story.nopath .spath{display:none}#story.nomark .smark{display:none}
@@ -62,12 +69,12 @@ header#top{flex:none;background:var(--panel);border-bottom:1px solid var(--line)
 .char{margin:0;padding:8px 0;border-top:1px solid var(--line)}.char:first-child{border-top:0}
 .char summary{display:flex;align-items:center;gap:12px;cursor:pointer;color:var(--ink);font-size:15px;list-style:none}.char summary::-webkit-details-marker{display:none}
 .av{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none;background:var(--line);display:flex;align-items:center;justify-content:center;font-weight:600}
-.cn{font:600 17px "Iowan Old Style",Georgia,serif;display:block}.cp{font-size:13px;display:block;color:var(--muted)}
+.cn{font:700 18px var(--sans);display:block}.cp{font-size:13px;display:block;color:var(--muted)}
 .char .cbody{padding:10px 0 4px}.char .cbody img{max-width:100%;border-radius:6px;display:block;margin-bottom:8px}.char p{margin:8px 0 0}#detail img{max-width:100%;display:block;border-radius:6px;margin:8px 0}.down{margin-top:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:6px}.down p{margin:4px 0 0}.strip .gap{flex:0 0 auto;min-width:0;border:1px dashed var(--line);border-radius:4px;padding:0 6px;font-size:11px;color:var(--muted);background:repeating-linear-gradient(135deg,transparent 0 4px,var(--line) 4px 5px)}
 
 
 
-.card h2{font-size:17px}.card img{max-width:100%;display:block;border-radius:6px;margin-top:8px}.card p{margin:8px 0 0}.badge{cursor:pointer}
+.card h2{font-size:19px}.card img{max-width:100%;display:block;border-radius:6px;margin-top:8px}.card p{margin:8px 0 0}.badge{cursor:pointer}
 input[type=range]{width:100%;accent-color:var(--accent-text)}
 #map>svg{text-rendering:geometricPrecision}
 .zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
@@ -208,7 +215,7 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 <path class="road" data-from="Castel" data-to="Auraine" d="M816.6,678.0 L804.9,656.7" stroke="#4a2400" stroke-width="1.5"/>
 <path class="road" data-from="Auraine" data-to="Molisse" d="M804.9,656.7 L786.5,667.9" stroke="#4a2400" stroke-width="1.5"/>
 </g>
-<g id="ports" font-family="DejaVu Sans Mono, Menlo, Consolas, monospace" font-size="13">
+<g id="ports" font-family="Alegreya, Georgia, serif" font-size="13">
 <g class="town" id="port-ashore" data-name="Ashore"><circle cx="308.6" cy="99.2" r="4.5" fill="#000" stroke="#fff" stroke-width="1"/><text x="317.6" y="104.2" text-anchor="start" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Ashore</text></g>
 <g class="town" id="port-inpass" data-name="Inpass"><circle cx="293.6" cy="168.1" r="4.5" fill="#000" stroke="#fff" stroke-width="1"/><text x="302.6" y="173.1" text-anchor="start" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Inpass</text></g>
 <g class="town" id="port-alcove" data-name="Alcove"><circle cx="404.1" cy="148.7" r="4.5" fill="#000" stroke="#fff" stroke-width="1"/><text x="413.1" y="153.7" text-anchor="start" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Alcove</text></g>
@@ -222,7 +229,7 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 <g class="town" id="port-roisenne" data-name="Roisenne"><circle cx="414.7" cy="569.5" r="4.5" fill="#000" stroke="#fff" stroke-width="1"/><text x="423.7" y="574.5" text-anchor="start" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Roisenne</text></g>
 <g class="town" id="port-trust" data-name="Trust"><circle cx="687.9" cy="684.4" r="4.5" fill="#000" stroke="#fff" stroke-width="1"/><text x="685.9" y="675.4" text-anchor="middle" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Trust</text></g>
 </g>
-<g id="kings-road-towns" font-family="DejaVu Sans Mono, Menlo, Consolas, monospace" font-size="8.5">
+<g id="kings-road-towns" font-family="Alegreya, Georgia, serif" font-size="8.5">
 <g class="town" id="town-vosk" data-name="Vosk" data-region="kings-road"><circle cx="891.6" cy="586.3" r="2.6" fill="#000" stroke="#fff" stroke-width="0.6"/><text x="896.6" y="589.3" text-anchor="start" fill="#000" stroke="#fff" stroke-width="2" paint-order="stroke" stroke-linejoin="round">Vosk</text></g>
 <g class="town" id="town-grev" data-name="Grev" data-region="kings-road"><circle cx="922.6" cy="585.6" r="2.6" fill="#000" stroke="#fff" stroke-width="0.6"/><text x="927.6" y="588.6" text-anchor="start" fill="#000" stroke="#fff" stroke-width="2" paint-order="stroke" stroke-linejoin="round">Grev</text></g>
 <g class="town" id="town-ond" data-name="Ond" data-region="kings-road"><circle cx="896.8" cy="602.7" r="2.6" fill="#000" stroke="#fff" stroke-width="0.6"/><text x="891.8" y="605.7" text-anchor="end" fill="#000" stroke="#fff" stroke-width="2" paint-order="stroke" stroke-linejoin="round">Ond</text></g>
@@ -446,7 +453,7 @@ $('tSea').onchange=()=>{$('sea-routes').classList.toggle('off',!$('tSea').checke
 // view
 function apply(){const r=map.getBoundingClientRect(),asp=r.width/r.height;let{x,y,w}=vb;let h=w/asp;
  vb.h=h;svg.setAttribute('viewBox',`${x} ${y} ${w} ${h}`);map.classList.toggle('zoomed',w<460);scaleTowns(r.width,w)}
-function scaleTowns(rw,w){const ppu=rw/w,sc=(t)=>{const kr=t.region==='kings-road';return Math.min(1.5,(kr?16:17)/((kr?8.5:13)*ppu))},tf=(x,y,s)=>`translate(${x} ${y}) scale(${s.toFixed(3)}) translate(${-x} ${-y})`;
+function scaleTowns(rw,w){const ppu=rw/w,sc=(t)=>{const kr=t.region==='kings-road';return Math.min(1.5,(kr?18:19)/((kr?8.5:13)*ppu))},tf=(x,y,s)=>`translate(${x} ${y}) scale(${s.toFixed(3)}) translate(${-x} ${-y})`;
  for(const n in towns){const t=towns[n];if(t.g)t.g.setAttribute('transform',tf(t.x,t.y,sc(t)))}
  const bs=Math.min(1.3,10/(6*ppu));document.querySelectorAll('#story .badge').forEach(b=>b.setAttribute('transform',tf(+b.dataset.tx,+b.dataset.ty,bs)));
  if(typeof selRing!=='undefined'&&selRing){const t=towns[selRing.dataset.n];if(t)selRing.setAttribute('transform',tf(t.x,t.y,sc(t)))}}

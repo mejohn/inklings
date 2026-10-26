@@ -43,6 +43,7 @@ button,select,summary,label,.tlnav,.zoom,.layers,.axis,.tabs{font-family:var(--s
 #kings-road path{stroke-width:2.5px;vector-effect:non-scaling-stroke}
 #sea-routes{stroke-width:1.8px;stroke-dasharray:6 5}#sea-routes path,.glow path{vector-effect:non-scaling-stroke}
 #story.nopath .spath{display:none}#story.nomark .smark{display:none}
+#guild{pointer-events:none}#guild.gfar .gtxt,#guild.gfar .gld{display:none}
 .layers{position:relative}.layers summary{list-style:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--line);background:var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.25);font-size:11px;cursor:pointer;color:var(--ink)}.layers summary::-webkit-details-marker{display:none}
 .layers .lp{position:absolute;right:46px;top:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.35)}.layers .lp label{display:flex;align-items:center;gap:8px;margin:6px 0;color:var(--ink);font-size:14px}.layers .lp small{display:block;color:var(--muted);font-size:12px;margin-top:6px;max-width:190px;white-space:normal}
 #lb{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;max-width:min(96vw,1100px);max-height:94vh;overflow:auto}
@@ -251,7 +252,7 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 </g>
 </svg>
 </div>
-<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" checked>Roads</label><label><input type="checkbox" id="tSea" checked>Sea routes</label><label><input type="checkbox" id="tStory" checked>Story</label><small>Route planning only uses roads and sea routes that are shown.</small></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
+<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" checked>Roads</label><label><input type="checkbox" id="tSea" checked>Sea routes</label><label><input type="checkbox" id="tStory" checked>Story</label><label><input type="checkbox" id="tGuild">Merchant’s Guild</label><small>Route planning only uses roads and sea routes that are shown.</small></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
 <aside>
 <div class="panel" id="pStory" role="tabpanel" aria-labelledby="tabStory"><section id="storysec">
 <div id="card" class="card"></div>
@@ -648,6 +649,7 @@ function apply(){const r=map.getBoundingClientRect(),asp=r.width/r.height;let{x,
  vb.h=h;svg.setAttribute('viewBox',`${x} ${y} ${w} ${h}`);map.classList.toggle('zoomed',w<460);scaleTowns(r.width,w)}
 function scaleTowns(rw,w){const ppu=rw/w,sc=(t)=>{const kr=t.region==='kings-road';return Math.min(1.5,(kr?18:19)/((kr?8.5:13)*ppu))},tf=(x,y,s)=>`translate(${x} ${y}) scale(${s.toFixed(3)}) translate(${-x} ${-y})`;
  for(const n in towns){const t=towns[n];if(t.g)t.g.setAttribute('transform',tf(t.x,t.y,sc(t)))}
+ const GG=document.getElementById('guild');if(GG){const gp=rw/w;GG.classList.toggle('gfar',gp<3);const gs=Math.min(1.5,12/(5*gp));GG.querySelectorAll('.gn').forEach(g=>g.setAttribute('transform',tf(+g.dataset.tx,+g.dataset.ty,gs)))}
  const bs=Math.min(1.3,10/(6*ppu));document.querySelectorAll('#story .badge').forEach(b=>b.setAttribute('transform',tf(+b.dataset.tx,+b.dataset.ty,bs)));
  if(typeof selRing!=='undefined'&&selRing){const t=towns[selRing.dataset.n];if(t)selRing.setAttribute('transform',tf(t.x,t.y,sc(t)))}}
 function fit(){const r=map.getBoundingClientRect(),asp=r.width/r.height;vb.w=Math.max(1104,825*asp);vb.x=(1104-vb.w)/2;vb.y=(825-vb.w/asp)/2;apply()}
@@ -716,6 +718,39 @@ from.onchange=to.onchange=route;$('rclear').onclick=()=>{from.value='';to.value=
 // ---- story
 const NS=svg.namespaceURI,mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e};
 const STORY=mk('g',{id:'story'});svg.appendChild(STORY);$('tStory').onchange=()=>STORY.classList.toggle('off',!$('tStory').checked);
+// ---- merchant guild layer
+const GUILD=mk('g',{id:'guild',class:'off','pointer-events':'none'});svg.appendChild(GUILD);
+$('tGuild').onchange=()=>GUILD.classList.toggle('off',!$('tGuild').checked);
+(function(){
+ const INK='#8c1d1d',HALO='#f1e2bd',ACAD='#1f5a73',GOLD='#d9a93a';
+ const NOTES=[
+  {t:'Vosk',s:'l',dx:-8,dy:-8,L:['Landed 4 / tgt 5']},
+  {t:'Ond',s:'r',dx:9,dy:-10,L:['Hd north: 56','Roll 140 / 140 / 140 / 140',['Prod 1,150 csk','per mgmt'],'Hd on to K.']},
+  {t:'Keld',s:'l',dx:-12,dy:8,L:['Prod 12 csk','Out: none'],keld:1},
+  {t:'Wold',s:'l',dx:-10,dy:8,L:['Landed 58 / tgt 60','Out, Ond acct: 1,150 csk']},
+  {t:'Tovar',s:'r',dx:6,dy:10,L:['Toll, std.']},
+  {t:'Drel',s:'r',dx:7,dy:12,L:['Cart rental, 2 firms']},
+  {t:'Trust',s:'m',dx:0,dy:12,L:['Salt, short']}
+ ];
+ for(const n of NOTES){const T=towns[n.t];if(!T)continue;
+  const g=mk('g',{class:'gn','data-tx':T.x,'data-ty':T.y});
+  const ex=T.x+n.dx+(n.s==='r'?-2:n.s==='l'?2:0),ey=T.y+n.dy-1.8;
+  g.append(mk('line',{class:'gld',x1:T.x,y1:T.y,x2:ex,y2:ey,stroke:INK,'stroke-width':1,'stroke-dasharray':'3 2',opacity:.55,'vector-effect':'non-scaling-stroke'}));
+  g.append(mk('circle',{cx:T.x,cy:T.y,r:4.2,fill:GOLD,'fill-opacity':.35,stroke:INK,'stroke-width':.9}));
+  const tx=mk('text',{class:'gtxt',x:T.x+n.dx,y:T.y+n.dy,'text-anchor':n.s==='r'?'start':n.s==='l'?'end':'middle','font-family':'Alegreya,Georgia,serif','font-size':5,'font-style':'italic',fill:INK,stroke:HALO,'stroke-width':1.7,'paint-order':'stroke','stroke-linejoin':'round'});
+  n.L.forEach((ln,i)=>{const sp=mk('tspan',{x:T.x+n.dx,dy:i?6.2:0}),a=[].concat(ln);sp.textContent=a[0];if(a[1]){const m=mk('tspan',{dx:2.5,'font-size':4.2,opacity:.8});m.textContent='('+a[1]+')';sp.append(m)}tx.append(sp)});
+  g.append(tx);
+  if(n.keld){
+   g.append(mk('path',{d:`M${T.x-3.7},${T.y+1.4} L${T.x+.7},${T.y+3.8}`,stroke:INK,'stroke-width':1.3,'stroke-linecap':'round',fill:'none'}));}
+  GUILD.append(g)}
+ function tick(sel,fromEnd,len){try{const p=svg.querySelector(sel);if(!p)return;const L=p.getTotalLength(),a=fromEnd?L-len:len,b=fromEnd?L-len-5:len+5,A=p.getPointAtLength(a),B=p.getPointAtLength(b),deg=Math.atan2(B.y-A.y,B.x-A.x)*180/Math.PI;
+  const g=mk('g',{class:'gn','data-tx':A.x,'data-ty':A.y}),tr=`translate(${A.x} ${A.y}) rotate(${deg.toFixed(1)})`,d='M-5,0 L.8,0 M-2.4,-2.3 L.8,0 L-2.4,2.3';
+  g.append(mk('path',{d,transform:tr,fill:'none',stroke:HALO,'stroke-width':2.8,'stroke-linecap':'round','stroke-linejoin':'round'}),mk('path',{d,transform:tr,fill:'none',stroke:INK,'stroke-width':1,'stroke-linecap':'round','stroke-linejoin':'round'}));
+  GUILD.append(g)}catch(e){}}
+ tick('#sea-routes path[data-from="Hartig"][data-to="Wold"]',true,14);
+ tick('#sea-routes path[data-from="Wold"][data-to="Trust"]',false,14);
+ apply();
+})();
 function findLegs(A,B){const D={[A]:0},prev={},todo=new Set([A]);
  while(todo.size){let u;for(const n of todo)if(u===undefined||D[n]<D[u])u=n;todo.delete(u);if(u===B)break;
   for(const e of adj[u]||[]){const v=e.a===u?e.b:e.a,nd=D[u]+e.len;if(nd<(D[v]??1e9)){D[v]=nd;prev[v]=[u,e];todo.add(v)}}}

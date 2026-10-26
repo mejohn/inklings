@@ -252,7 +252,7 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 </g>
 </svg>
 </div>
-<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" checked>Roads</label><label><input type="checkbox" id="tSea" checked>Sea routes</label><label><input type="checkbox" id="tStory" checked>Story</label><label><input type="checkbox" id="tGuild">Merchant’s Guild</label><small>Route planning only uses roads and sea routes that are shown.</small></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
+<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" autocomplete="off" checked>Roads</label><label><input type="checkbox" id="tSea" autocomplete="off" checked>Sea routes</label><label><input type="checkbox" id="tStory" autocomplete="off" checked>Story</label><label><input type="checkbox" id="tGuild" autocomplete="off">Merchant’s Guild</label><small>Route planning only uses roads and sea routes that are shown.</small></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
 <aside>
 <div class="panel" id="pStory" role="tabpanel" aria-labelledby="tabStory"><section id="storysec">
 <div id="card" class="card"></div>
@@ -721,6 +721,7 @@ const STORY=mk('g',{id:'story'});svg.appendChild(STORY);$('tStory').onchange=()=
 // ---- merchant guild layer
 const GUILD=mk('g',{id:'guild',class:'off','pointer-events':'none'});svg.appendChild(GUILD);
 $('tGuild').onchange=()=>{GUILD.classList.toggle('off',!$('tGuild').checked);GUILD.dataset.fit='';apply()};
+GUILD.classList.toggle('off',!$('tGuild').checked);
 (function(){
  const INK='#8c1d1d',HALO='#f1e2bd',ACAD='#1f5a73',GOLD='#d9a93a';
  const NOTES=[

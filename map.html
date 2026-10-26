@@ -82,10 +82,16 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 .zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
 .zoom button{width:40px;height:40px;padding:0;font-size:20px;line-height:1;background:var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .zoom button.fit{font-size:13px}
+.bar1 h1{flex:1 1 0}
+.axis button,.strip button{font-size:14px;font-weight:600;color:var(--ink);border-color:var(--muted);line-height:1}
+.axis button.now{font-size:15px;font-weight:700}
+.axis button.gap{color:var(--muted);border-color:var(--line)}
+@media(min-width:780px){.tlnav{flex:1 1 0;justify-content:flex-end;margin-left:0}}
+@media(max-width:779px){.bar1::after{content:"";flex:1 1 0;order:2}.tlnav{order:3}}
 </style></head><body>
 <header id="top">
 <div class="bar1"><h1>Inklings</h1><div class="tabs" role="tablist"><button role="tab" id="tabStory" aria-selected="true" aria-controls="pStory">Story</button><button role="tab" id="tabTravel" aria-selected="false" aria-controls="pTravel">Travel</button><button role="tab" id="tabChars" aria-selected="false" aria-controls="pChars">Characters</button></div>
-<div id="tlnav" class="tlnav"><button id="prev" aria-label="Previous session">◀</button><span id="slbl" class="muted"></span><button id="next" aria-label="Next session">▶</button><span id="cap" class="muted"></span></div></div>
+<div id="tlnav" class="tlnav"><button id="prev" aria-label="Previous session">◀</button><span id="slbl" class="muted"></span><button id="next" aria-label="Next session">▶</button></div></div>
 <div id="tl"><div id="axis" class="axis" role="group" aria-label="Timeline by nights"></div></div>
 </header>
 <div class="main">
@@ -781,7 +787,7 @@ function drawStory(){STORY.innerHTML='';const pg=mk('g',{class:'spath',fill:'non
 let TOTAL=0;SESSIONS.forEach(s=>{s.day=TOTAL+1;TOTAL+=(s.nights||0)+(s.downtime||0)});
 function buildList(){const L=$('slist');$('lsum').textContent=`All sessions (${SESSIONS.length})`;SESSIONS.forEach((s,k)=>{const li=document.createElement('li'),b=document.createElement('button');b.className='link';b.textContent=`${k}. ${s.title}`;b.onclick=()=>pick(k+1,1);const d=document.createElement('span');d.className='leg';d.textContent=` \u00b7 Day ${s.day}`;li.append(b,d);L.append(li)})}
 const WIN=10;
-function buildStrip(){$('cap').textContent=`${TOTAL} nights total`;buildList()}
+function buildStrip(){buildList()}
 function renderStrip(){const ax=$('axis'),n=SESSIONS.length;ax.innerHTML='';if(!n)return;
  const W=ax.clientWidth||320,CW=28,SW=24,G=3,CH=46,c=Math.max(0,cur-1),S=SESSIONS,SVGNS='http://www.w3.org/2000/svg';
  const cost=k=>CW+G+(S[k].downtime?SW+G:0);let a=0,b=n;

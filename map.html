@@ -649,7 +649,7 @@ function apply(){const r=map.getBoundingClientRect(),asp=r.width/r.height;let{x,
  vb.h=h;svg.setAttribute('viewBox',`${x} ${y} ${w} ${h}`);map.classList.toggle('zoomed',w<460);scaleTowns(r.width,w)}
 function scaleTowns(rw,w){const ppu=rw/w,sc=(t)=>{const kr=t.region==='kings-road';return Math.min(1.5,(kr?18:19)/((kr?8.5:13)*ppu))},tf=(x,y,s)=>`translate(${x} ${y}) scale(${s.toFixed(3)}) translate(${-x} ${-y})`;
  for(const n in towns){const t=towns[n];if(t.g)t.g.setAttribute('transform',tf(t.x,t.y,sc(t)))}
- const GG=document.getElementById('guild');if(GG){const gp=rw/w;GG.classList.toggle('gfar',gp<3);const gs=Math.min(1.5,12/(5*gp));GG.querySelectorAll('.gn').forEach(g=>g.setAttribute('transform',tf(+g.dataset.tx,+g.dataset.ty,gs)))}
+ const GG=document.getElementById('guild');if(GG){const gp=rw/w;GG.classList.toggle('gfar',gp<3.5);if(gp>=3.5&&!GG.classList.contains('off')&&!GG.dataset.fit&&GG.fit&&GG.fit())GG.dataset.fit='1';const gs=Math.min(1.5,14/(5*gp));GG.querySelectorAll('.gn').forEach(g=>g.setAttribute('transform',tf(+g.dataset.tx,+g.dataset.ty,gs)))}
  const bs=Math.min(1.3,10/(6*ppu));document.querySelectorAll('#story .badge').forEach(b=>b.setAttribute('transform',tf(+b.dataset.tx,+b.dataset.ty,bs)));
  if(typeof selRing!=='undefined'&&selRing){const t=towns[selRing.dataset.n];if(t)selRing.setAttribute('transform',tf(t.x,t.y,sc(t)))}}
 function fit(){const r=map.getBoundingClientRect(),asp=r.width/r.height;vb.w=Math.max(1104,825*asp);vb.x=(1104-vb.w)/2;vb.y=(825-vb.w/asp)/2;apply()}
@@ -720,14 +720,14 @@ const NS=svg.namespaceURI,mk=(n,a)=>{const e=document.createElementNS(NS,n);for(
 const STORY=mk('g',{id:'story'});svg.appendChild(STORY);$('tStory').onchange=()=>STORY.classList.toggle('off',!$('tStory').checked);
 // ---- merchant guild layer
 const GUILD=mk('g',{id:'guild',class:'off','pointer-events':'none'});svg.appendChild(GUILD);
-$('tGuild').onchange=()=>GUILD.classList.toggle('off',!$('tGuild').checked);
+$('tGuild').onchange=()=>{GUILD.classList.toggle('off',!$('tGuild').checked);GUILD.dataset.fit='';apply()};
 (function(){
  const INK='#8c1d1d',HALO='#f1e2bd',ACAD='#1f5a73',GOLD='#d9a93a';
  const NOTES=[
-  {t:'Vosk',s:'l',dx:-8,dy:-8,L:['Landed 4 / tgt 5']},
-  {t:'Ond',s:'r',dx:9,dy:-10,L:['Hd north: 56','Roll 140 / 140 / 140 / 140',['Prod 1,150 csk','per mgmt'],'Hd on to K.']},
-  {t:'Keld',s:'l',dx:-12,dy:8,L:['Prod 12 csk','Out: none'],keld:1},
-  {t:'Wold',s:'l',dx:-10,dy:8,L:['Landed 58 / tgt 60','Out, Ond acct: 1,150 csk']},
+  {t:'Vosk',s:'l',dx:-8,dy:-8,L:['4 / tgt 5']},
+  {t:'Ond',s:'r',dx:9,dy:-10,L:['Pop 140 / 140 / 140 / 140',['Prod 1,150 csk','per mgmt']]},
+  {t:'Keld',s:'l',dx:-12,dy:8,L:['Prod 12 csk'],keld:1},
+  {t:'Wold',s:'l',dx:-10,dy:8,L:['58 / tgt 60','Out, Ond acct: 1,150 csk']},
   {t:'Tovar',s:'r',dx:6,dy:10,L:['Toll, std.']},
   {t:'Drel',s:'r',dx:7,dy:12,L:['Cart rental, 2 firms']},
   {t:'Trust',s:'m',dx:0,dy:12,L:['Salt, short']}
@@ -737,8 +737,10 @@ $('tGuild').onchange=()=>GUILD.classList.toggle('off',!$('tGuild').checked);
   const ex=T.x+n.dx+(n.s==='r'?-2:n.s==='l'?2:0),ey=T.y+n.dy-1.8;
   g.append(mk('line',{class:'gld',x1:T.x,y1:T.y,x2:ex,y2:ey,stroke:INK,'stroke-width':1,'stroke-dasharray':'3 2',opacity:.55,'vector-effect':'non-scaling-stroke'}));
   g.append(mk('circle',{cx:T.x,cy:T.y,r:4.2,fill:GOLD,'fill-opacity':.35,stroke:INK,'stroke-width':.9}));
-  const tx=mk('text',{class:'gtxt',x:T.x+n.dx,y:T.y+n.dy,'text-anchor':n.s==='r'?'start':n.s==='l'?'end':'middle','font-family':'Alegreya,Georgia,serif','font-size':5,'font-style':'italic',fill:INK,stroke:HALO,'stroke-width':1.7,'paint-order':'stroke','stroke-linejoin':'round'});
-  n.L.forEach((ln,i)=>{const sp=mk('tspan',{x:T.x+n.dx,dy:i?6.2:0}),a=[].concat(ln);sp.textContent=a[0];if(a[1]){const m=mk('tspan',{dx:2.5,'font-size':4.2,opacity:.8});m.textContent='('+a[1]+')';sp.append(m)}tx.append(sp)});
+  const tx=mk('text',{class:'gtxt',x:T.x+n.dx,y:T.y+n.dy,'text-anchor':n.s==='r'?'start':n.s==='l'?'end':'middle','font-family':'Alegreya,Georgia,serif','font-size':5*(n.f||1),'font-weight':700,fill:INK});
+  n.L.forEach((ln,i)=>{const sp=mk('tspan',{x:T.x+n.dx,dy:i?6.2*(n.f||1):0}),a=[].concat(ln);sp.textContent=a[0];if(a[1]){const m=mk('tspan',{dx:2.5,'font-size':4.2*(n.f||1),'font-weight':400,opacity:.9});m.textContent='('+a[1]+')';sp.append(m)}tx.append(sp)});
+  const f=n.f||1,mw=(Math.max(...n.L.map(ln=>{const a=[].concat(ln);return a[0].length*2.6+(a[1]?a[1].length*2.2+6:0)}))+3)*f,bx=n.s==='r'?T.x+n.dx-2:n.s==='l'?T.x+n.dx-mw+2:T.x+n.dx-mw/2;
+  g.append(mk('rect',{class:'gtxt gbg',x:bx,y:T.y+n.dy-5*f,width:mw,height:(n.L.length*6.2-1.2)*f+2,rx:1.4,fill:HALO,stroke:INK,'stroke-width':.5,'stroke-opacity':.8}));
   g.append(tx);
   if(n.keld){
    g.append(mk('path',{d:`M${T.x-3.7},${T.y+1.4} L${T.x+.7},${T.y+3.8}`,stroke:INK,'stroke-width':1.3,'stroke-linecap':'round',fill:'none'}));}
@@ -749,6 +751,9 @@ $('tGuild').onchange=()=>GUILD.classList.toggle('off',!$('tGuild').checked);
   GUILD.append(g)}catch(e){}}
  tick('#sea-routes path[data-from="Hartig"][data-to="Wold"]',true,14);
  tick('#sea-routes path[data-from="Wold"][data-to="Trust"]',false,14);
+ const fit=()=>{let ok=0;GUILD.querySelectorAll('.gn').forEach(g=>{const tx=g.querySelector('text'),r=g.querySelector('.gbg');if(!tx||!r)return;try{const b=tx.getBBox();if(b.width>0){r.setAttribute('x',b.x-2);r.setAttribute('y',b.y-1);r.setAttribute('width',b.width+4);r.setAttribute('height',b.height+2);ok=1}}catch(e){}});return ok};
+ GUILD.fit=fit;
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{GUILD.dataset.fit='';apply()});
  apply();
 })();
 function findLegs(A,B){const D={[A]:0},prev={},todo=new Set([A]);

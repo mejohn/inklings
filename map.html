@@ -9,7 +9,7 @@
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font:17px/1.5 var(--serif);display:flex;flex-direction:column}
 
-#map{flex:1;min-height:0;min-width:0;position:relative;overflow:hidden;touch-action:none;cursor:grab}
+#map{flex:1;min-height:0;min-width:0;position:relative;overflow:hidden;touch-action:none;cursor:grab;background:#7091c4}
 #map.drag{cursor:grabbing}#map>svg{width:100%;height:100%;display:block;user-select:none}
 aside{background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;max-height:46vh;min-height:0}
 @media(min-width:780px){aside{width:min(360px,34vw);max-height:none;border-top:0;border-right:1px solid var(--line)}}
@@ -252,7 +252,7 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 </g>
 </svg>
 </div>
-<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" autocomplete="off" checked>Roads</label><label><input type="checkbox" id="tSea" autocomplete="off" checked>Sea routes</label><label><input type="checkbox" id="tStory" autocomplete="off" checked>Story</label><label><input type="checkbox" id="tGuild" autocomplete="off">Merchant’s Guild</label><small>Route planning only uses roads and sea routes that are shown.</small></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
+<div class="zoom"><details class="layers"><summary>Layers</summary><div class="lp"><label><input type="checkbox" id="tRoad" autocomplete="off" checked>Roads</label><label><input type="checkbox" id="tSea" autocomplete="off" checked>Sea routes</label><label><input type="checkbox" id="tStory" autocomplete="off" checked>Story</label><label><input type="checkbox" id="tGuild" autocomplete="off">Merchant’s Guild</label></div></details><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button><button id="zfit" class="fit" aria-label="Show the whole world" title="Show the whole world">World</button><button id="zstory" class="fit" aria-label="Zoom to story" title="Zoom to story">Story</button></div>
 <aside>
 <div class="panel" id="pStory" role="tabpanel" aria-labelledby="tabStory"><section id="storysec">
 <div id="card" class="card"></div>

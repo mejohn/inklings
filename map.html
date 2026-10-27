@@ -82,6 +82,8 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 .zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
 .zoom button{width:40px;height:40px;padding:0;font-size:20px;line-height:1;background:var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .zoom button.fit{font-size:13px}
+.tot{margin:2px 0 6px;font-weight:600}
+.spd{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}.spd td{padding:4px 0;border-bottom:1px solid var(--line)}.spd td:last-child{text-align:right;white-space:nowrap;padding-left:10px}
 .bar1 h1{flex:1 1 0}
 .axis button,.strip button{font-size:14px;font-weight:600;color:var(--ink);border-color:var(--muted);line-height:1}
 .axis button.now{font-size:15px;font-weight:700}
@@ -271,6 +273,8 @@ input[type=range]{width:100%;accent-color:var(--accent-text)}
 <label for="to">To</label><select id="to"></select>
 <div class="row"><button id="rclear">Clear route</button></div>
 <div id="result" class="muted" style="margin-top:8px">Pick two towns, or tap one on the map.</div></section>
+<section><b>Travel speeds</b>
+<table class="spd"><tr><td>Walking</td><td>30 km/day</td></tr><tr><td>Carriage / cart</td><td>15 km/day</td></tr><tr><td>Horseback</td><td>60 km/day</td></tr><tr><td>Gold ship (inner routes)</td><td>30–60 km/day</td></tr><tr><td>Salt ship, favorable weather</td><td>300 km/day</td></tr><tr><td>Salt ship, unfavorable weather</td><td>0–60 km/day</td></tr></table></section>
 </div>
 </aside></div>
 <dialog id="lb" aria-label="Image viewer"><img id="lbimg" alt=""><div id="lbcap"></div><button id="lbx" aria-label="Close image">×</button></dialog>
@@ -716,10 +720,20 @@ function route(){glow.innerHTML='';const A=from.value,B=to.value,out=$('result')
  // merge junction hops into one leg per town-to-town stretch
  const seq=[],ids=[A];let acc=0,kind=legs[0][1].kind;let start=A;
  legs.forEach(([u,e],i)=>{const v=e.a===u?e.b:e.a;glow.append(mk('path',{d:e.el.getAttribute('d')}));acc+=e.len;
-  const last=i===legs.length-1;if(!towns[v].junction||last){seq.push({a:start,b:v,kind:e.kind,len:acc});start=v;acc=0}});
- const tot=D[B],fmt=l=>'~'+(Math.round(l*KM_PER_UNIT/5)*5||5).toLocaleString('en')+' km';
- out.innerHTML='';const s=document.createElement('div');s.textContent=`${seq.length} leg${seq.length>1?'s':''}, ${fmt(tot)}`;const ol=document.createElement('ol');
- seq.forEach(l=>{const li=document.createElement('li');li.textContent=`${l.a} to ${l.b} `;const k=document.createElement('span');k.className='leg';k.textContent=`${l.kind==='road'?'road':'sea'}, ${fmt(l.len)}`;li.append(k);ol.append(li)});out.append(s,ol)}
+  const last=i===legs.length-1;if(!towns[v].junction||last){seq.push({a:start,b:v,kind:e.kind,len:acc,salt:isSalt(e)});start=v;acc=0}});
+ const tot=D[B],km=l=>l*KM_PER_UNIT,fmt=l=>'~'+(Math.round(km(l)/5)*5||5).toLocaleString('en')+' km',
+  h2=x=>Math.max(.5,Math.round(x*2)/2),
+  rng=(a,b,pl)=>{const x=h2(a),y=h2(b);return(x===y?x:x+'–'+y)+(pl?'+':'')+(y===1&&!pl?' day':' days')},
+  MODES=[['Walking',30],['Cart',15],['Horseback',60]],
+  sea=l=>l.salt?{lo:km(l.len)/300,hi:km(l.len)/60,pl:1}:{lo:km(l.len)/60,hi:km(l.len)/30};
+ let slo=0,shi=0,spl=0,rd=0;seq.forEach(l=>{if(l.kind==='road')rd+=km(l.len);else{l.t=sea(l);slo+=l.t.lo;shi+=l.t.hi;spl=spl||l.t.pl}});
+ out.innerHTML='';const s=document.createElement('div');s.textContent=`${seq.length} leg${seq.length>1?'s':''}, ${fmt(tot)}`;
+ const tt=document.createElement('div');tt.className='tot';
+ if(!rd)tt.textContent=rng(slo,shi,spl);else MODES.forEach(([n,v])=>{const r=document.createElement('div');r.textContent=`${n}: ${rng(rd/v+slo,rd/v+shi,spl)}`;tt.append(r)});
+ const ol=document.createElement('ol');
+ seq.forEach(l=>{const li=document.createElement('li');li.textContent=`${l.a} to ${l.b} `;const k=document.createElement('span');k.className='leg';
+  k.textContent=l.kind==='road'?`road, ${fmt(l.len)}, walk ${h2(km(l.len)/30)} · cart ${h2(km(l.len)/15)} · horse ${h2(km(l.len)/60)} days`:`${l.salt?'salt ship':'gold ship'}, ${fmt(l.len)}, ${rng(l.t.lo,l.t.hi,l.t.pl)}${l.salt?' (fair / foul weather)':''}`;li.append(k);ol.append(li)});out.append(s,tt,ol)}
+const SALT=new Set([]),isSalt=e=>SALT.has(e.a+'|'+e.b)||SALT.has(e.b+'|'+e.a);
 from.onchange=to.onchange=route;$('rclear').onclick=()=>{from.value='';to.value='';route()};
 // ---- story
 const NS=svg.namespaceURI,mk=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e};
